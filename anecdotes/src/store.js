@@ -1,5 +1,6 @@
 
 import { create } from 'zustand'
+import anecdoteService from './services/anecdotes'
 
 const anecdotesAtStart = [
   'If it hurts, do it more often',
@@ -12,24 +13,36 @@ const anecdotesAtStart = [
 
 const getId = () => (100000 * Math.random()).toFixed(0)
 
-const asObject = anecdote => ({
+const asObject = (anecdote) => ({
   content: anecdote,
   id: getId(),
   votes: 0
 })
 
-const useAnecdoteStore = create((set) => ({
-  anecdotes: anecdotesAtStart.map(asObject),
+const useAnecdoteStore = create((set, get) => ({
+  anecdotes: [],
   filter: "",
   actions: {
-    vote: id => set(
-      state => ({anecdotes: state.anecdotes.map(anecdote =>
-        anecdote.id === id ? {...anecdote, votes: anecdote.votes + 1} : anecdote)})
-    ),
-    add: anecdote => set(
-      state => ({anecdotes: [...state.anecdotes, asObject(anecdote)]})
-    ),
-    setFilter: value => set(() => ({ filter: value }))
+    initialize: async () => {
+      const anecdotes = await anecdoteService.getAll()
+      set(() => ({anecdotes}))
+    },
+    vote: async (id) => {
+      const anecdote = get().anecdotes.find(anecdote => anecdote.id === id)
+      const updated = await anecdoteService.update(
+        id, {...anecdote, votes: anecdote.votes + 1}
+      )
+      console.log(updated)
+      set(state => ({
+        anecdotes: state.anecdotes.map(anecdote =>
+        anecdote.id === id ? updated : anecdote)})
+    )},
+    add: async (content) =>{
+        const newAnecdote = await anecdoteService.createNew(content)
+        set(state => ({anecdotes: [...state.anecdotes, newAnecdote]})
+    )},
+    setFilter: 
+      value => set(() => ({ filter: value }))
   },
 }))
 
