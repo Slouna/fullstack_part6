@@ -1,6 +1,9 @@
 
 import { create } from 'zustand'
+import {useShallow} from 'zustand/react/shallow'
 import anecdoteService from './services/anecdotes'
+import {devtools} from 'zustand/middleware'
+import anecdotes from './services/anecdotes'
 
 const anecdotesAtStart = [
   'If it hurts, do it more often',
@@ -19,7 +22,7 @@ const asObject = (anecdote) => ({
   votes: 0
 })
 
-const useAnecdoteStore = create((set, get) => ({
+const useAnecdoteStore = create(devtools((set, get) => ({
   anecdotes: [],
   filter: "",
   actions: {
@@ -49,7 +52,7 @@ const useAnecdoteStore = create((set, get) => ({
     setFilter: 
       value => set(() => ({ filter: value }))
   },
-}))
+})))
 
 const useNotificationStore = create((set) =>({
   notification: null,
@@ -59,8 +62,17 @@ const useNotificationStore = create((set) =>({
 }))
 
 
-export const useAnecdotes = () => useAnecdoteStore((state) => state.anecdotes)
+export const useAnecdotes = () => {
+  const anecdotes = useAnecdoteStore((state => state.anecdotes))
+  const filter = useAnecdoteStore((state) => state.filter)
+  return anecdotes
+    .filter(anecdote =>
+      anecdote.content.toLowerCase().includes(filter.toLowerCase())
+    )
+    .toSorted((a, b) => b.votes - a.votes)
+}
 export const useAnecdoteActions = () => useAnecdoteStore((state) => state.actions)
 export const useFilter = () => useAnecdoteStore((state) => state.filter)
 export const useNotifications = () => useNotificationStore((state) => state.notification)
 export const useNotificationActions = () => useNotificationStore((state) => state.actions)
+export default useAnecdoteStore
