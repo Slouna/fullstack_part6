@@ -1,4 +1,10 @@
+import { useNotifications, useNotificationActions } from "../store";
+import { useAnecdotes } from "../store";
+
 const Notification = () => {
+  const notification = useNotifications()
+
+
   const style = {
     border: "solid",
     padding: 10,
@@ -6,9 +12,16 @@ const Notification = () => {
     marginBottom: 10,
   }
 
+  if (notification === null){
+    return(
+      <div>
+
+      </div>
+    )
+  }
   return (
     <div style={style} data-testid="notification">
-      render here notification...
+      {notification} 
     </div>
   )
 }

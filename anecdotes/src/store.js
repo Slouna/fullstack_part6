@@ -32,7 +32,6 @@ const useAnecdoteStore = create((set, get) => ({
       const updated = await anecdoteService.update(
         id, {...anecdote, votes: anecdote.votes + 1}
       )
-      console.log(updated)
       set(state => ({
         anecdotes: state.anecdotes.map(anecdote =>
         anecdote.id === id ? updated : anecdote)})
@@ -41,13 +40,27 @@ const useAnecdoteStore = create((set, get) => ({
         const newAnecdote = await anecdoteService.createNew(content)
         set(state => ({anecdotes: [...state.anecdotes, newAnecdote]})
     )},
+    deleteAnecdote: async (id) => {
+      await anecdoteService.deleteAnecdote(id)
+      set(state => ({
+        anecdotes: state.anecdotes.filter(anecdote => anecdote.id !== id)
+      }))
+    },
     setFilter: 
       value => set(() => ({ filter: value }))
   },
 }))
 
+const useNotificationStore = create((set) =>({
+  notification: null,
+  actions:{
+    setNotification: value => set(() => ({ notification: value }))
+  }
+}))
 
 
 export const useAnecdotes = () => useAnecdoteStore((state) => state.anecdotes)
 export const useAnecdoteActions = () => useAnecdoteStore((state) => state.actions)
 export const useFilter = () => useAnecdoteStore((state) => state.filter)
+export const useNotifications = () => useNotificationStore((state) => state.notification)
+export const useNotificationActions = () => useNotificationStore((state) => state.actions)
