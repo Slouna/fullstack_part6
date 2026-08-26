@@ -9,8 +9,8 @@ vi.mock('../src/services/anecdotes', () => ({
     }
 }))
 
-import anecdoteService from '../services/anecdotes'
-import useAnecdoteStore, {useAnecdotes, useFilter, useAnecdoteActions} from '../store'
+import anecdoteService from './services/anecdotes'
+import useAnecdoteStore, {useAnecdotes, useFilter, useAnecdoteActions} from './store'
 
 
 beforeEach(() => {
