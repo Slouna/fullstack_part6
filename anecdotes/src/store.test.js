@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { renderHook, act, render } from '@testing-library/react'
 
-vi.mock('../src/services/anecdotes', () => ({
+vi.mock('./services/anecdotes', () => ({
     default: {
       getAll: vi.fn(),
       createNew: vi.fn(),
