@@ -1,18 +1,20 @@
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
+import {useQuery, useMutation, QueryClient, useQueryClient} from '@tanstack/react-query'
+import { getAnecdotes, createAnecdote, updateAnecdote } from './requests.js'
+import { useAnecdotes } from './hooks/useAnecdotes'
 
 const App = () => {
-  const handleVote = (anecdote) => {
-    console.log('vote')
+  const {anecdotes, isPending, isError, vote} = useAnecdotes()
+  
+  if (isPending) {
+    return <div>loading data...</div>
   }
 
-  const anecdotes = [
-    {
-      content: 'If it hurts, do it more often',
-      id: '47145',
-      votes: 0,
-    },
-  ]
+  if(isError){
+    return <div>anecdote service not available due to problems in server</div>
+  }
+
 
   return (
     <div>
@@ -26,7 +28,7 @@ const App = () => {
           <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => handleVote(anecdote)}>vote</button>
+            <button onClick={() => vote(anecdote)}>vote</button>
           </div>
         </div>
       ))}
