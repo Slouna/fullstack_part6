@@ -1,4 +1,6 @@
 const baseUrl = 'http://localhost:3001/anecdotes'
+import { useContext } from "react"
+import NotificationContext from "./components/NotificationContext"
 
 export const getAnecdotes = async () => {
   const response = await fetch(baseUrl)
@@ -9,6 +11,8 @@ export const getAnecdotes = async () => {
 }
 
 export const createAnecdote = async (newAnecdote) => {
+    const {message, setMessage} = useContext(NotificationContext)
+
     const options = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

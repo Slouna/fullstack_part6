@@ -1,4 +1,10 @@
+import { useContext } from "react"
+import AnecdoteContext from "./NotificationContext"
+
 const Notification = () => {
+  const {message} = useContext(AnecdoteContext)
+
+
   const style = {
     border: "solid",
     padding: 10,
@@ -6,9 +12,9 @@ const Notification = () => {
     marginBottom: 5,
   }
 
-  if (true) return null
+  if (message===null) return null
 
-  return <div data-testid="notification" style={style}></div>
+  return <div data-testid="notification" style={style}>{message}</div>
 }
 
 export default Notification

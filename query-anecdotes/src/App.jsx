@@ -3,10 +3,20 @@ import Notification from './components/Notification'
 import {useQuery, useMutation, QueryClient, useQueryClient} from '@tanstack/react-query'
 import { getAnecdotes, createAnecdote, updateAnecdote } from './requests.js'
 import { useAnecdotes } from './hooks/useAnecdotes'
+import { useContext, useState } from 'react'
+import NotificationContext from './components/NotificationContext'
+import useNotify from './hooks/useNotify'
 
 const App = () => {
+  const {setMessage} = useNotify()
   const {anecdotes, isPending, isError, vote} = useAnecdotes()
-  
+
+  const giveVote = (anecdote) => {
+    vote(anecdote)
+    setMessage(`anecdote '${anecdote.content}' voted`)
+    setTimeout(() => {setMessage(null)}, 5000)
+  }
+
   if (isPending) {
     return <div>loading data...</div>
   }
@@ -28,7 +38,7 @@ const App = () => {
           <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => vote(anecdote)}>vote</button>
+            <button onClick={() => giveVote(anecdote)}>vote</button>
           </div>
         </div>
       ))}
